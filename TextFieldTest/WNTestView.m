@@ -10,9 +10,19 @@
 @interface WNTestView()
 @property (nonatomic, strong) UIView* spacer1;
 @property (nonatomic, strong) UIView* spacer2;
+@property (nonatomic, assign) CGRect frameRect1;
+@property (nonatomic, assign) CGRect frameRect2;
+
 @end
+
+
+const CGFloat fieldWidth = 200;
+const CGFloat fieldHeight = 40;
+const CGFloat fieldGap = 10;
+const CGFloat fieldBase = 20;
 @implementation WNTestView
 
+#define USE_AUTOLAYOUT
 
 #pragma mark - init, dealloc, setup
 
@@ -28,9 +38,13 @@
 
 - (void)setup {
     
-    //textFields
+    
+    [self setKeyboardNotifications];
+    
+    
     self.textField1 = [[UITextField alloc] init];
     self.textField2 = [[UITextField alloc] init];
+    
     self.textField1.delegate = self;
     self.textField2.delegate = self;
     [self addSubview:self.textField1];
@@ -38,31 +52,35 @@
     [self setupTextField:self.textField1];
     [self setupTextField:self.textField2];
     
-    //layout spacers
+    
+#ifdef USE_AUTOLAYOUT
+    self.textField1.translatesAutoresizingMaskIntoConstraints = NO;
+    self.textField2.translatesAutoresizingMaskIntoConstraints = NO;
     self.spacer1 = [[UIView alloc] init];
     self.spacer2 = [[UIView alloc] init];
     self.spacer1.translatesAutoresizingMaskIntoConstraints  = NO;
     self.spacer2.translatesAutoresizingMaskIntoConstraints = NO;
     [self addSubview:self.spacer1];
     [self addSubview:self.spacer2];
-
-    //keyboard notifications
-    [self setKeyboardNotifications];
+#else
+    CGFloat offsetX = (self.bounds.size.width - fieldWidth) / 2.0f;
+    CGFloat offsetY1 = self.bounds.size.height - fieldBase - fieldHeight;
+    CGFloat offsetY2 = offsetY1 - fieldGap-fieldHeight;
+    self.frameRect1 =CGRectMake(offsetX, offsetY1, fieldWidth, fieldHeight);
+    self.frameRect2 = CGRectMake(offsetX, offsetY2, fieldWidth, fieldHeight);
+    
+    self.textField1.frame = self.frameRect1;
+    self.textField2.frame = self.frameRect2;
+#endif
+    
 }
 
 
 - (void) setupTextField:(UITextField*)textField {
-    textField.translatesAutoresizingMaskIntoConstraints = NO;
-        textField.layer.borderColor = [UIColor redColor].CGColor;
-        textField.layer.borderWidth =  2.0f;
-        textField.textColor = [UIColor blackColor];
+    textField.layer.borderColor = [UIColor redColor].CGColor;
+    textField.layer.borderWidth =  2.0f;
+    textField.textColor = [UIColor blackColor];
     textField.placeholder = @"placeholder";
-    
-        //   self.icon = icon;
-    
-    
-
-    
 }
 
 #pragma mark - derived properties
@@ -89,7 +107,7 @@
 //
 //- (void)keyboardWillShowNotification1:(NSNotification *)notification {
 //    [super keyboardWillShowNotification:notification];
-//    
+//
 //    [self setNeedsUpdateConstraints];
 //    [self updateConstraintsIfNeeded];
 //    [UIView animateWithDuration:1.3 animations:^{
@@ -106,15 +124,41 @@
 {
     NSTimeInterval duration = [[userInfo objectForKey:UIKeyboardAnimationDurationUserInfoKey] doubleValue];
     UIViewAnimationCurve animationCurve = [[userInfo objectForKey:UIKeyboardAnimationCurveUserInfoKey] integerValue];
-    [self setNeedsUpdateConstraints];
+    
+#ifdef USE_AUTOLAYOUT
 
-    [UIView animateWithDuration:duration
-                          delay:0
-                        options:animationOptionsWithCurve(animationCurve)
-                     animations:^{
-                         [self layoutIfNeeded];
-                     }
-                     completion:^(BOOL finished){}];
+    [self setNeedsUpdateConstraints];
+    [self layoutIfNeeded];
+    
+#else
+    CGRect frame1 = self.frameRect1;
+    CGRect frame2 = self.frameRect2;
+    
+    frame1.origin.y -= [self keyboardHeight]*1.0;
+    frame2.origin.y -= [self keyboardHeight]*1.0;
+        [UIView animateWithDuration:100
+                              delay:0
+                            options:animationOptionsWithCurve(animationCurve)
+                         animations:^{
+    self.textField1.frame = frame1;
+    self.textField2.frame = frame2;
+                         } completion:NULL];
+    
+    
+#endif
+    
+    
+    //
+    // self.textField2.translatesAutoresizingMaskIntoConstraints   = YES;
+    // frame.origin.y -= [self keyboardHeight]*1.0;
+    //    [UIView animateWithDuration:100
+    //                          delay:0
+    //                        options:animationOptionsWithCurve(animationCurve)
+    //                     animations:^{
+    //   self.textField2.frame = frame;
+    //  self.textField2.text = @"textField2";
+    //                }
+    //                completion:^(BOOL finished){}];
 }
 
 static inline UIViewAnimationOptions animationOptionsWithCurve(UIViewAnimationCurve curve)
@@ -178,15 +222,20 @@ static inline UIViewAnimationOptions animationOptionsWithCurve(UIViewAnimationCu
 
 #pragma mark - constraints
 
+#ifdef USE_AUTOLAYOUT
 
 - (void)updateConstraints {
     [super updateConstraints];
     [self removeConstraints:self.constraints];
-    NSString* formatV = @"V:[textField1(==40)][textField2(==40)]-(bottomSpace)-|";
-    NSString* formatH1 = @"H:|-[spacer1(>=0)][textField2(==200)][spacer2(==spacer1)]-|";
-    NSString* formatH2 = @"H:|-[spacer1(>=0)][textField1(==200)][spacer2(==spacer1)]-|";
+    NSString* formatV = @"V:[textField1(==40)]-(fieldGap)-[textField2(==fieldHeight)]-(fieldBase)-|";
+    NSString* formatH1 = @"H:|-[spacer1(>=0)][textField2(==fieldWidth)][spacer2(==spacer1)]-|";
+    NSString* formatH2 = @"H:|-[spacer1(>=0)][textField1(==fieldWidth)][spacer2(==spacer1)]-|";
     
-    NSDictionary* metrics = @{@"bottomSpace":@(self.keyboardHeight+30)};
+    NSDictionary* metrics = @{
+                               @"fieldGap":@(fieldGap)
+                              ,@"fieldWidth":@(fieldWidth)
+                              ,@"fieldHeight":@(fieldHeight)
+                              ,@"fieldBase":@(self.keyboardHeight+fieldBase)};
     NSDictionary* views = @{
                             @"textField1":self.textField1
                             ,@"textField2":self.textField2
@@ -202,5 +251,5 @@ static inline UIViewAnimationOptions animationOptionsWithCurve(UIViewAnimationCu
     
 }
 
-
+#endif
 @end
