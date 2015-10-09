@@ -4,7 +4,7 @@
 //
 //  Created by jonathan on 08/10/2015.
 //  Copyright © 2015 foundry. All rights reserved.
-//
+//  develop@foundry.tv
 
 #import "AppDelegate.h"
 

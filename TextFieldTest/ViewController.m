@@ -4,7 +4,7 @@
 //
 //  Created by jonathan on 08/10/2015.
 //  Copyright © 2015 foundry. All rights reserved.
-//
+//  develop@foundry.tv
 
 #import "ViewController.h"
 #import "WNTestView.h"
@@ -15,6 +15,12 @@
 
 @implementation ViewController
 
+
+
+- (void)viewDidLoad {
+    [super viewDidLoad];
+    self.title = @"ios9.0 - using autolayout";
+}
 
 
 - (void)viewDidAppear:(BOOL)animated {

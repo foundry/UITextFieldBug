@@ -4,7 +4,7 @@
 //
 //  Created by jonathan on 08/10/2015.
 //  Copyright © 2015 foundry. All rights reserved.
-//
+//  develop@foundry.tv
 
 #import "WNTestView.h"
 @interface WNTestView()
@@ -22,6 +22,31 @@ const CGFloat fieldGap = 10;
 const CGFloat fieldBase = 20;
 @implementation WNTestView
 
+
+/*
+ 
+ these are simple attempts to animate text fields as the keyboard slides up
+ comparisions with autolayout and frame-setting methods
+ there are no animation blocks - animation is handled 'implicitly' by the keyboard animation.
+ 
+ different environments to test
+ 
+                        USE_AUTOLAYOUT ON   USE_AUTOLAYOUT OFF
+ 
+ 1/ simulator, ios 8.4        no issue             no issue
+ 2/ simulater, ios 9.0          bug                no issue
+ 3/ device, ios 9.0             bug                no issue
+ 
+ bug is only manifest on first run after view initialisation
+ to see the bug
+ 1. start entering text in first text field
+ - keyboard will animate up
+ - text entry will work as usual
+ 2. now start entering text in second text field
+ - text in first text field will jump up momentarily.
+ This _looks_ as if a CAAnimation stack has some unfinished animations but may be caused by something entirely different. I have tried to 'removeAllAnimations' from all layers etc but not managed to isolate the cause.
+ 
+ */
 #define USE_AUTOLAYOUT
 
 #pragma mark - init, dealloc, setup
@@ -96,77 +121,6 @@ const CGFloat fieldBase = 20;
 
 #pragma mark - actions
 
-//- (void)keyboardWillHideNotification1:(NSNotification *)notification  {
-//    [super keyboardWillHideNotification:notification];
-//    [self setNeedsUpdateConstraints];
-//    [self updateConstraintsIfNeeded];
-//    [UIView animateWithDuration:1.3 animations:^{
-//        [self setNeedsLayout];
-//    }];
-//}
-//
-//- (void)keyboardWillShowNotification1:(NSNotification *)notification {
-//    [super keyboardWillShowNotification:notification];
-//
-//    [self setNeedsUpdateConstraints];
-//    [self updateConstraintsIfNeeded];
-//    [UIView animateWithDuration:1.3 animations:^{
-//        [self setNeedsLayout];
-//    }];
-//}
-
-
-
-
-
-
-- (void)animateLayout:(NSDictionary*)userInfo //withFrame:(CGRect)newFrame
-{
-    NSTimeInterval duration = [[userInfo objectForKey:UIKeyboardAnimationDurationUserInfoKey] doubleValue];
-    UIViewAnimationCurve animationCurve = [[userInfo objectForKey:UIKeyboardAnimationCurveUserInfoKey] integerValue];
-    
-#ifdef USE_AUTOLAYOUT
-
-    [self setNeedsUpdateConstraints];
-    [self layoutIfNeeded];
-    
-#else
-    CGRect frame1 = self.frameRect1;
-    CGRect frame2 = self.frameRect2;
-    
-    frame1.origin.y -= [self keyboardHeight]*1.0;
-    frame2.origin.y -= [self keyboardHeight]*1.0;
-        [UIView animateWithDuration:100
-                              delay:0
-                            options:animationOptionsWithCurve(animationCurve)
-                         animations:^{
-    self.textField1.frame = frame1;
-    self.textField2.frame = frame2;
-                         } completion:NULL];
-    
-    
-#endif
-    
-    
-    //
-    // self.textField2.translatesAutoresizingMaskIntoConstraints   = YES;
-    // frame.origin.y -= [self keyboardHeight]*1.0;
-    //    [UIView animateWithDuration:100
-    //                          delay:0
-    //                        options:animationOptionsWithCurve(animationCurve)
-    //                     animations:^{
-    //   self.textField2.frame = frame;
-    //  self.textField2.text = @"textField2";
-    //                }
-    //                completion:^(BOOL finished){}];
-}
-
-static inline UIViewAnimationOptions animationOptionsWithCurve(UIViewAnimationCurve curve)
-{
-    //http://spin.atomicobject.com/2014/01/08/animate-around-ios-keyboard/
-    return (UIViewAnimationOptions)curve << 16;
-}
-
 
 
 
@@ -190,20 +144,44 @@ static inline UIViewAnimationOptions animationOptionsWithCurve(UIViewAnimationCu
 
 - (void)keyboardWillHideNotification:(NSNotification *)notification  {
     self.keyboardHeight = 0;
-    [self animateLayout:notification.userInfo];
+    [self keyboardWillChange:notification.userInfo];
 }
 
 - (void)keyboardWillShowNotification:(NSNotification *)notification {
     self.keyboardHeight = [self keyboardHeight:notification];
-    [self animateLayout:notification.userInfo];
+    [self keyboardWillChange:notification.userInfo];
     
 }
 
 - (void)keyboardDidHideNotification:(NSNotification *)notification  {
+    
 }
 
 - (void)keyboardDidShowNotification:(NSNotification *)notification {
+   
+}
+
+- (void)keyboardWillChange:(NSDictionary*)userInfo
+{
     
+#ifdef USE_AUTOLAYOUT
+    
+    [self setNeedsUpdateConstraints];
+    [self layoutIfNeeded];
+    
+#else
+    CGRect frame1 = self.frameRect1;
+    CGRect frame2 = self.frameRect2;
+    
+    frame1.origin.y -= [self keyboardHeight]*1.0;
+    frame2.origin.y -= [self keyboardHeight]*1.0;
+    
+    self.textField1.frame = frame1;
+    self.textField2.frame = frame2;
+    
+    
+    
+#endif
 }
 
 
