@@ -45,6 +45,10 @@ const CGFloat fieldBase = 360;
     [self removeNotifications];
 }
 
+- (BOOL)requiresConstraintBasedLayout {
+    return YES;
+}
+
 - (void)setup {
     
     [self setKeyboardNotifications];

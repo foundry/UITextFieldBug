@@ -19,7 +19,13 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    self.title = @"ios9.0 - using autolayout";
+#ifdef USE_AUTOLAYOUT
+    NSString* layoutSring = @"using autolayout";
+#else
+    NSSting* layoutString = @"using frames";
+#endif
+    NSString* iosString = ([self wn_system9])?@"ios9":@"ios8";
+    self.title = [NSString stringWithFormat:@"%@ - %@", iosString, layoutSring];
 }
 
 
@@ -28,7 +34,12 @@
     [self.view addSubview:self.testView];
     [super viewDidAppear:animated];
 }
-
+- (BOOL)wn_system9
+{
+    NSArray *versionCompatibility = [[UIDevice currentDevice].systemVersion componentsSeparatedByString:@"."];
+    
+    return (9 <= [[versionCompatibility objectAtIndex:0] intValue]);
+}
 
 
 
