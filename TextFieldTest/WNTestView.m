@@ -16,38 +16,22 @@
 @end
 
 
+#ifdef SLIDE_UP_TEXTFIELDS
 const CGFloat fieldWidth = 200;
 const CGFloat fieldHeight = 40;
 const CGFloat fieldGap = 10;
 const CGFloat fieldBase = 20;
+
+#else
+const CGFloat fieldWidth = 200;
+const CGFloat fieldHeight = 40;
+const CGFloat fieldGap = 10;
+const CGFloat fieldBase = 360;
+
+#endif
 @implementation WNTestView
 
 
-/*
- 
- these are simple attempts to animate text fields as the keyboard slides up
- comparisions with autolayout and frame-setting methods
- there are no animation blocks - animation is handled 'implicitly' by the keyboard animation.
- 
- different environments to test
- 
-                        USE_AUTOLAYOUT ON   USE_AUTOLAYOUT OFF
- 
- 1/ simulator, ios 8.4        no issue             no issue
- 2/ simulater, ios 9.0          bug                no issue
- 3/ device, ios 9.0             bug                no issue
- 
- bug is only manifest on first run after view initialisation
- to see the bug
- 1. start entering text in first text field
- - keyboard will animate up
- - text entry will work as usual
- 2. now start entering text in second text field
- - text in first text field will jump up momentarily.
- This _looks_ as if a CAAnimation stack has some unfinished animations but may be caused by something entirely different. I have tried to 'removeAllAnimations' from all layers etc but not managed to isolate the cause.
- 
- */
-#define USE_AUTOLAYOUT
 
 #pragma mark - init, dealloc, setup
 
@@ -62,7 +46,6 @@ const CGFloat fieldBase = 20;
 }
 
 - (void)setup {
-    
     
     [self setKeyboardNotifications];
     
@@ -158,28 +141,46 @@ const CGFloat fieldBase = 20;
 }
 
 - (void)keyboardDidShowNotification:(NSNotification *)notification {
-   
+
+
 }
 
 - (void)keyboardWillChange:(NSDictionary*)userInfo
 {
-    
+    /*
+     in the bug case (only) we also get these NSLayoutConstraint warnings triggered BEFORE we call the constraints methods here. I strongly suspect there is a connection!
+     
+     2015-10-09 01:36:07.961 TextFieldTest[1427:311122] Unable to simultaneously satisfy constraints.
+     Probably at least one of the constraints in the following list is one you don't want. Try this: (1) look at each constraint and try to figure out which you don't expect; (2) find the code that added the unwanted constraint or constraints and fix it. (Note: If you're seeing NSAutoresizingMaskLayoutConstraints that you don't understand, refer to the documentation for the UIView property translatesAutoresizingMaskIntoConstraints)
+     (
+     "<NSLayoutConstraint:0x156e91050 V:|-(20)-[UIInputSetContainerView:0x156e73820]   (Names: '|':UIRemoteKeyboardWindow:0x156dafb70 )>",
+     "<NSLayoutConstraint:0x156da9be0 'UIInputWindowController-top' V:|-(0)-[UIInputSetContainerView:0x156e73820]   (Names: '|':UIRemoteKeyboardWindow:0x156dafb70 )>"
+     )
+     
+     Will attempt to recover by breaking constraint
+     <NSLayoutConstraint:0x156e91050 V:|-(20)-[UIInputSetContainerView:0x156e73820]   (Names: '|':UIRemoteKeyboardWindow:0x156dafb70 )>
+     
+     Make a symbolic breakpoint at UIViewAlertForUnsatisfiableConstraints to catch this in the debugger.
+     The methods in the UIConstraintBasedLayoutDebugging category on UIView listed in <UIKit/UIView.h> may also be helpful.
+     
+     */
 #ifdef USE_AUTOLAYOUT
-    
     [self setNeedsUpdateConstraints];
     [self layoutIfNeeded];
     
 #else
     CGRect frame1 = self.frameRect1;
     CGRect frame2 = self.frameRect2;
-    
-    frame1.origin.y -= [self keyboardHeight]*1.0;
-    frame2.origin.y -= [self keyboardHeight]*1.0;
-    
-    self.textField1.frame = frame1;
-    self.textField2.frame = frame2;
-    
-    
+    if (frame1.origin.y > self.bounds.size.height - [self keyboardHeight]) {
+        frame1.origin.y -= [self keyboardHeight]*1.0;
+        self.textField1.frame = frame1;
+    }
+
+    if (frame2.origin.y > self.bounds.size.height - [self keyboardHeight]) {
+        frame2.origin.y -= [self keyboardHeight]*1.0;
+        self.textField2.frame = frame2;
+    }
+ 
     
 #endif
 }
@@ -208,12 +209,16 @@ const CGFloat fieldBase = 20;
     NSString* formatV = @"V:[textField1(==40)]-(fieldGap)-[textField2(==fieldHeight)]-(fieldBase)-|";
     NSString* formatH1 = @"H:|-[spacer1(>=0)][textField2(==fieldWidth)][spacer2(==spacer1)]-|";
     NSString* formatH2 = @"H:|-[spacer1(>=0)][textField1(==fieldWidth)][spacer2(==spacer1)]-|";
+    CGFloat fieldBottom = fieldBase;
+    if (fieldBottom < self.keyboardHeight) {
+        fieldBottom = self.keyboardHeight + 40;
+    }
     
     NSDictionary* metrics = @{
                                @"fieldGap":@(fieldGap)
                               ,@"fieldWidth":@(fieldWidth)
                               ,@"fieldHeight":@(fieldHeight)
-                              ,@"fieldBase":@(self.keyboardHeight+fieldBase)};
+                              ,@"fieldBase":@(fieldBottom)};
     NSDictionary* views = @{
                             @"textField1":self.textField1
                             ,@"textField2":self.textField2
