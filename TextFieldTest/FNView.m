@@ -6,8 +6,10 @@
 //  Copyright © 2015 foundry. All rights reserved.
 //  develop@foundry.tv
 
-#import "WNTestView.h"
-@interface WNTestView()
+#import "FNView.h"
+#import "FNTextField.h"
+
+@interface FNView()
 @property (nonatomic, strong) UIView* spacer1;
 @property (nonatomic, strong) UIView* spacer2;
 @property (nonatomic, assign) CGRect frameRect1;
@@ -29,7 +31,7 @@ const CGFloat fieldGap = 10;
 const CGFloat fieldBase = 360;
 
 #endif
-@implementation WNTestView
+@implementation FNView
 
 
 
@@ -53,10 +55,13 @@ const CGFloat fieldBase = 360;
     
     [self setKeyboardNotifications];
     
-    
+#ifdef BUG_FIX
+    self.textField1 = [[FNTextField alloc] init];
+    self.textField2 = [[FNTextField alloc] init];
+#else
     self.textField1 = [[UITextField alloc] init];
     self.textField2 = [[UITextField alloc] init];
-    
+#endif
     self.textField1.delegate = self;
     self.textField2.delegate = self;
     [self addSubview:self.textField1];

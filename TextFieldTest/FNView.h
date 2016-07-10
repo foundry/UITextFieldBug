@@ -6,6 +6,9 @@
 //  Copyright © 2015 foundry. All rights reserved.
 //
 
+/*
+ update 10 July 2016 - suggested bug fix
+ */
 
 
 /*
@@ -41,12 +44,12 @@
 
 #define USE_AUTOLAYOUT  //bug is only manifest when using autolayout. Frame-based textFields do not show the bug.
 
-
+#define BUG_FIX //bug is fixed by sending 'setNeedsLayout' and 'layoutIfNeeded' to a UITextField subclass on resignFirstResponder
 
 
 @import UIKit;
 
-@interface WNTestView : UIView  <UITextFieldDelegate>
+@interface FNView : UIView  <UITextFieldDelegate>
 @property (nonatomic, strong) UITextField* textField1;
 @property (nonatomic, strong) UITextField* textField2;
 @property (nonatomic, assign, readwrite) CGFloat keyboardHeight;

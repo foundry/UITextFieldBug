@@ -13,7 +13,8 @@
 		AB0E23D01BC6E5FF003CC16C /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = AB0E23CE1BC6E5FF003CC16C /* Main.storyboard */; };
 		AB0E23D21BC6E5FF003CC16C /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = AB0E23D11BC6E5FF003CC16C /* Assets.xcassets */; };
 		AB0E23D51BC6E5FF003CC16C /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = AB0E23D31BC6E5FF003CC16C /* LaunchScreen.storyboard */; };
-		AB0E23E41BC6E87E003CC16C /* WNTestView.m in Sources */ = {isa = PBXBuildFile; fileRef = AB0E23E31BC6E87E003CC16C /* WNTestView.m */; settings = {ASSET_TAGS = (); }; };
+		AB0E23E41BC6E87E003CC16C /* FNView.m in Sources */ = {isa = PBXBuildFile; fileRef = AB0E23E31BC6E87E003CC16C /* FNView.m */; };
+		AB1121FC1D326DC700FA278E /* FNTextField.m in Sources */ = {isa = PBXBuildFile; fileRef = AB1121FB1D326DC700FA278E /* FNTextField.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -27,8 +28,10 @@
 		AB0E23D11BC6E5FF003CC16C /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		AB0E23D41BC6E5FF003CC16C /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		AB0E23D61BC6E5FF003CC16C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		AB0E23E21BC6E87E003CC16C /* WNTestView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WNTestView.h; sourceTree = "<group>"; };
-		AB0E23E31BC6E87E003CC16C /* WNTestView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WNTestView.m; sourceTree = "<group>"; };
+		AB0E23E21BC6E87E003CC16C /* FNView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FNView.h; sourceTree = "<group>"; };
+		AB0E23E31BC6E87E003CC16C /* FNView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FNView.m; sourceTree = "<group>"; };
+		AB1121FA1D326DC700FA278E /* FNTextField.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FNTextField.h; sourceTree = "<group>"; };
+		AB1121FB1D326DC700FA278E /* FNTextField.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FNTextField.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -61,8 +64,10 @@
 		AB0E23C41BC6E5FF003CC16C /* TextFieldTest */ = {
 			isa = PBXGroup;
 			children = (
-				AB0E23E21BC6E87E003CC16C /* WNTestView.h */,
-				AB0E23E31BC6E87E003CC16C /* WNTestView.m */,
+				AB1121FA1D326DC700FA278E /* FNTextField.h */,
+				AB1121FB1D326DC700FA278E /* FNTextField.m */,
+				AB0E23E21BC6E87E003CC16C /* FNView.h */,
+				AB0E23E31BC6E87E003CC16C /* FNView.m */,
 				AB0E23C81BC6E5FF003CC16C /* AppDelegate.h */,
 				AB0E23C91BC6E5FF003CC16C /* AppDelegate.m */,
 				AB0E23CB1BC6E5FF003CC16C /* ViewController.h */,
@@ -156,8 +161,9 @@
 			files = (
 				AB0E23CD1BC6E5FF003CC16C /* ViewController.m in Sources */,
 				AB0E23CA1BC6E5FF003CC16C /* AppDelegate.m in Sources */,
-				AB0E23E41BC6E87E003CC16C /* WNTestView.m in Sources */,
+				AB0E23E41BC6E87E003CC16C /* FNView.m in Sources */,
 				AB0E23C71BC6E5FF003CC16C /* main.m in Sources */,
+				AB1121FC1D326DC700FA278E /* FNTextField.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -308,6 +314,7 @@
 				AB0E23DB1BC6E5FF003CC16C /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

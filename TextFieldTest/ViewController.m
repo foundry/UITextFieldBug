@@ -7,10 +7,10 @@
 //  develop@foundry.tv
 
 #import "ViewController.h"
-#import "WNTestView.h"
+#import "FNView.h"
 @interface ViewController ()
 @property (nonatomic, strong) UITextField* textField;
-@property (nonatomic, strong) WNTestView* testView;
+@property (nonatomic, strong) FNView* testView;
 @end
 
 @implementation ViewController
@@ -30,7 +30,7 @@
 
 
 - (void)viewDidAppear:(BOOL)animated {
-    self.testView = [[WNTestView alloc] initWithFrame:self.view.bounds];
+    self.testView = [[FNView alloc] initWithFrame:self.view.bounds];
     [self.view addSubview:self.testView];
     [super viewDidAppear:animated];
 }
