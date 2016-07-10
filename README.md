@@ -1,6 +1,8 @@
 # UITextFieldBug
 
-### Updated 10 July 2016 with bug fix
+### Updated 10 July 2016 with bug fix   
+
+See comments in [__FNViw.h__](https://github.com/foundry/UITextFieldBug/blob/master/TextFieldTest/FNView.h) for details
 
 UITextField + Autolayout bug in ios9
 
