@@ -1,5 +1,7 @@
 # UITextFieldBug
 
+### Updated 10 July 2016 with bug fix
+
 UITextField + Autolayout bug in ios9
 
 [Radar filed](http://openradar.appspot.com/23041580)
