@@ -44,6 +44,8 @@
 
 #define USE_AUTOLAYOUT  //bug is only manifest when using autolayout. Frame-based textFields do not show the bug.
 
+//COMMENT the following line to see the bug
+
 #define BUG_FIX //bug is fixed by sending 'setNeedsLayout' and 'layoutIfNeeded' to a UITextField subclass on resignFirstResponder
 
 
